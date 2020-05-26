@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group >
+        <item
+        android:id="@+id/person_item"
+        android:icon="@drawable/person_manage"
+        android:title="人员管理"/>
+
+        <item
+            android:id="@+id/alarm_item"
+            android:icon="@drawable/alarm_list"
+            android:title="告警记录"/>
+
+        <item
+            android:id="@+id/exit"
+            android:icon="@drawable/exit"
+            android:title="退出" />
+    </group>
+</menu>
