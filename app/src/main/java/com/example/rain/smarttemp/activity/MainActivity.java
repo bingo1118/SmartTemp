@@ -153,7 +153,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onFailure(Object reasonObj) {
-                T.showShort(mContext,"获取失败");
+                T.showShort(mContext,"获取数据失败");
             }
         });
     }
