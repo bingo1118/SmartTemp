@@ -57,7 +57,7 @@ public class AlarmHistoryActivity extends Activity {
     }
 
     private void getPassPersonData() {
-        RequestCenter.getAlarmList(MyApp.getUserID(), page+"","","","", new DisposeDataListener() {
+        RequestCenter.getAlarmList(MyApp.getUserID(), page+"","","","", "",new DisposeDataListener() {
             @Override
             public void onSuccess(Object responseObj) {
                 if(passRecordList==null){
@@ -66,7 +66,7 @@ public class AlarmHistoryActivity extends Activity {
                 PassRecordResponse passRecordResponse=(PassRecordResponse) responseObj;
                 if(passRecordList.size()!=0){
                     if(passRecordResponse.getList().size()==0){
-                        T.showShort(mContext,"已经没有更多数据");
+                        mAdapter.setHasMore(false);
                     }else{
                         passRecordList.addAll(passRecordResponse.getList());
                         mAdapter.notifyDataSetChanged();

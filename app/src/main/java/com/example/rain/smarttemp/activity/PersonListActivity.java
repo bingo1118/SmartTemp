@@ -89,11 +89,11 @@ public class PersonListActivity extends Activity {
                 PersonListResponse passRecordResponse=(PersonListResponse)responseObj;
                 if(passRecordList.size()!=0){
                     if(passRecordResponse.getList().size()==0){
-                        T.showShort(mContext,"已经没有更多数据");
+                        mAdapter.setHasMore(false);
                     }else{
                         passRecordList.addAll(passRecordResponse.getList());
-                        mAdapter.notifyDataSetChanged();
                     }
+                    mAdapter.notifyDataSetChanged();
                 }else{
                     passRecordList=passRecordResponse.getList();
                     linearLayoutManager=new LinearLayoutManager(mContext);

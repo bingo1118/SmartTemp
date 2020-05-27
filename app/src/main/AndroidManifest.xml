@@ -60,7 +60,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.AlarmActivity"></activity>
+        <activity android:name=".activity.AlarmActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".activity.ShowImageActivity"></activity>
     </application>
 
 </manifest>

@@ -16,6 +16,7 @@ import com.example.rain.smarttemp.api.RequestCenter;
 import com.example.rain.smarttemp.global.MyApp;
 import com.example.rain.smarttemp.model.PassPersonByConditionResponse;
 import com.example.rain.smarttemp.model.PassRecord;
+import com.example.rain.smarttemp.model.PassRecordResponse;
 import com.example.rain.smarttemp.model.Person;
 import com.example.rain.smarttemp.model.PersonListResponse;
 import com.example.rain.smarttemp.utils.T;
@@ -40,8 +41,8 @@ public class PersonByConditionActivity extends Activity {
 
     Context mContext;
     LinearLayoutManager linearLayoutManager;
-    PersonAdapter mAdapter;
-    List<Person> passRecordList;
+    PassRecordAdapter mAdapter;
+    List<PassRecord> passRecordList;
 
     private int lastVisibleItem;
     private int firstVisibleItem;
@@ -55,44 +56,120 @@ public class PersonByConditionActivity extends Activity {
 
         ButterKnife.bind(this);
         mContext=this;
-        type=getIntent().getStringExtra("type");
+        type=getIntent().getStringExtra("type");//0 员工 1访客 2异常
         refreshListView();
         getPassPersonData();
     }
 
     private void getPassPersonData() {
-        RequestCenter.getCurrentPersonListWithCondition(MyApp.getUserID(), page+"",type, new DisposeDataListener() {
-            @Override
-            public void onSuccess(Object responseObj) {
-                if(passRecordList==null){
-                    passRecordList=new ArrayList<>();
-                }
-                PersonListResponse passRecordResponse=(PersonListResponse)responseObj;
-                if(passRecordList.size()!=0){
-                    if(passRecordResponse.getList().size()==0){
-                        T.showShort(mContext,"已经没有更多数据");
-                    }else{
-                        passRecordList.addAll(passRecordResponse.getList());
-                        mAdapter.notifyDataSetChanged();
+        switch (type){
+            case "0":
+                RequestCenter.getPassRecords(MyApp.getUserID(), "",page+"","","","1","1", new DisposeDataListener() {
+                    @Override
+                    public void onSuccess(Object responseObj) {
+                        if(passRecordList==null){
+                            passRecordList=new ArrayList<>();
+                        }
+                        PassRecordResponse passRecordResponse=(PassRecordResponse)responseObj;
+                        if(passRecordList.size()!=0){
+                            if(passRecordResponse.getList().size()==0){
+                                mAdapter.setHasMore(false);
+                            }else{
+                                passRecordList.addAll(passRecordResponse.getList());
+                            }
+                            mAdapter.notifyDataSetChanged();
+                        }else{
+                            passRecordList=passRecordResponse.getList();
+                            linearLayoutManager=new LinearLayoutManager(mContext);
+                            linearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+                            mAdapter=new PassRecordAdapter(mContext,passRecordList);
+                            recyclerView.setAdapter(mAdapter);
+                            swipereFreshLayout.setRefreshing(false);
+                        }
+
                     }
-                }else{
-                    passRecordList=passRecordResponse.getList();
-                    linearLayoutManager=new LinearLayoutManager(mContext);
-                    linearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
-                    recyclerView.setLayoutManager(linearLayoutManager);
-                    mAdapter=new PersonAdapter(mContext,passRecordList);
-                    recyclerView.setAdapter(mAdapter);
-                    swipereFreshLayout.setRefreshing(false);
-                }
 
-            }
+                    @Override
+                    public void onFailure(Object reasonObj) {
+                        T.showShort(mContext,"获取失败");
+                        swipereFreshLayout.setRefreshing(false);
+                    }
+                });
+                break;
+            case "1":
+                RequestCenter.getPassRecords(MyApp.getUserID(), "",page+"","","","2","1", new DisposeDataListener() {
+                    @Override
+                    public void onSuccess(Object responseObj) {
+                        if(passRecordList==null){
+                            passRecordList=new ArrayList<>();
+                        }
+                        PassRecordResponse passRecordResponse=(PassRecordResponse)responseObj;
+                        if(passRecordList.size()!=0){
+                            if(passRecordResponse.getList().size()==0){
 
-            @Override
-            public void onFailure(Object reasonObj) {
-                T.showShort(mContext,"获取失败");
-                swipereFreshLayout.setRefreshing(false);
-            }
-        });
+                                mAdapter.setHasMore(false);
+                            }else{
+                                passRecordList.addAll(passRecordResponse.getList());
+                            }
+                            mAdapter.notifyDataSetChanged();
+                        }else{
+                            passRecordList=passRecordResponse.getList();
+                            linearLayoutManager=new LinearLayoutManager(mContext);
+                            linearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+                            mAdapter=new PassRecordAdapter(mContext,passRecordList);
+                            recyclerView.setAdapter(mAdapter);
+                            swipereFreshLayout.setRefreshing(false);
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Object reasonObj) {
+                        T.showShort(mContext,"获取失败");
+                        swipereFreshLayout.setRefreshing(false);
+                    }
+                });
+                break;
+            case "2":
+                RequestCenter.getAlarmList(MyApp.getUserID(), page+"","","","", "1",new DisposeDataListener() {
+                    @Override
+                    public void onSuccess(Object responseObj) {
+                        if(passRecordList==null){
+                            passRecordList=new ArrayList<>();
+                        }
+                        PassRecordResponse passRecordResponse=(PassRecordResponse) responseObj;
+                        if(passRecordList.size()!=0){
+                            if(passRecordResponse.getList().size()==0){
+                                mAdapter.setHasMore(false);
+                            }else{
+                                passRecordList.addAll(passRecordResponse.getList());
+                            }
+                            mAdapter.notifyDataSetChanged();
+                        }else{
+                            passRecordList=passRecordResponse.getList();
+                            linearLayoutManager=new LinearLayoutManager(mContext);
+                            linearLayoutManager.setOrientation(OrientationHelper.VERTICAL);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+                            mAdapter=new PassRecordAdapter(mContext,passRecordList);
+                            recyclerView.setAdapter(mAdapter);
+                            if(passRecordList.size()<10){
+                                mAdapter.setHasMore(false);
+                            }
+                            swipereFreshLayout.setRefreshing(false);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Object reasonObj) {
+                        T.showShort(mContext,"获取失败");
+                        swipereFreshLayout.setRefreshing(false);
+                    }
+                });
+                break;
+        }
+
     }
 
     private void refreshListView() {

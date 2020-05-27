@@ -61,12 +61,12 @@ public class PassRecordByPersonIdActivity extends Activity {
                 }
                 PassRecordResponse passRecordResponse=(PassRecordResponse) responseObj;
                 if(passRecordList.size()!=0){
-                    if(passRecordResponse.getList().size()==0){
-                        T.showShort(mContext,"已经没有更多数据");
+                    if(passRecordResponse.getList()==null||passRecordResponse.getList().size()==0){
+                        mAdapter.setHasMore(false);
                     }else{
                         passRecordList.addAll(passRecordResponse.getList());
-                        mAdapter.notifyDataSetChanged();
                     }
+                    mAdapter.notifyDataSetChanged();
                 }else{
                     passRecordList=passRecordResponse.getList();
                     linearLayoutManager=new LinearLayoutManager(mContext);

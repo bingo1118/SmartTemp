@@ -72,6 +72,8 @@ public class MainActivity extends Activity {
 
     @Bind(R.id.search_btn)
     ImageButton search_btn;
+    @Bind(R.id.top_ib)
+    ImageButton top_ib;
 
     @Bind(R.id.drawerLayout)
     DrawerLayout drawerLayout;
@@ -106,11 +108,18 @@ public class MainActivity extends Activity {
         PushManager.getInstance().bindAlias(this.getApplicationContext(),MyApp.getUserID());
     }
 
-    @OnClick({R.id.personCount_tv,R.id.vistorCount_tv,R.id.unNormalCount_tv,R.id.drawer_show_btn,R.id.search_btn})
+    @OnClick({R.id.personCount_tv,R.id.vistorCount_tv
+            ,R.id.unNormalCount_tv,R.id.drawer_show_btn
+            ,R.id.search_btn,R.id.top_ib})
     public void onClick(View v){
         int type=0;
         Intent i=new Intent(MainActivity.this,PersonByConditionActivity.class);
         switch (v.getId()){
+            case R.id.top_ib:
+                recyclerView.scrollToPosition(0);
+                top_ib.setVisibility(View.GONE);
+                T.showShort(mContext,"已返回顶部");
+                break;
             case R.id.search_btn:
                 showConditionDialog();
                 break;
@@ -258,6 +267,7 @@ public class MainActivity extends Activity {
                 partmentId="";
                 passRecordList.clear();
                 getPassRecordData();
+                getPassSum();
             }
         });
 
@@ -269,6 +279,11 @@ public class MainActivity extends Activity {
                         return;
                     }
                     int count = mAdapter.getItemCount();
+                    if(lastVisibleItem>5){
+                        top_ib.setVisibility(View.VISIBLE);
+                    }else{
+                        top_ib.setVisibility(View.GONE);
+                    }
                     if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem+1 == count&&firstVisibleItem!=0) {
                         page+=1;
                         getPassRecordData();
@@ -287,10 +302,10 @@ public class MainActivity extends Activity {
     }
 
     private void getPassRecordData() {
-        if(page!=1){
-            progressbar.setVisibility(View.VISIBLE);
-        }
-        RequestCenter.getPassRecords(MyApp.getUserID(), partmentId,page+"",startTime,endTime, new DisposeDataListener() {
+//        if(page!=1){
+//            progressbar.setVisibility(View.VISIBLE);
+//        }
+        RequestCenter.getPassRecords(MyApp.getUserID(), partmentId,page+"",startTime,endTime,"","", new DisposeDataListener() {
             @Override
             public void onSuccess(Object responseObj) {
                 if(passRecordList==null){
@@ -299,11 +314,11 @@ public class MainActivity extends Activity {
                 PassRecordResponse passRecordResponse=(PassRecordResponse) responseObj;
                 if(passRecordList.size()!=0){
                     if(passRecordResponse.getList().size()==0){
-                        T.showShort(mContext,"已经没有更多数据");
+                        mAdapter.setHasMore(false);
                     }else{
                         passRecordList.addAll(passRecordResponse.getList());
-                        mAdapter.notifyDataSetChanged();
                     }
+                    mAdapter.notifyDataSetChanged();
                 }else{
                     passRecordList=passRecordResponse.getList();
                     linearLayoutManager=new LinearLayoutManager(mContext);
@@ -311,16 +326,19 @@ public class MainActivity extends Activity {
                     recyclerView.setLayoutManager(linearLayoutManager);
                     mAdapter=new PassRecordAdapter(mContext,passRecordList);
                     recyclerView.setAdapter(mAdapter);
+                    if(passRecordList.size()<10){
+                        mAdapter.setHasMore(false);
+                    }
                     swipereFreshLayout.setRefreshing(false);
                 }
-                progressbar.setVisibility(View.GONE);
+//                progressbar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Object reasonObj) {
                 T.showShort(mContext,"获取失败");
                 swipereFreshLayout.setRefreshing(false);
-                progressbar.setVisibility(View.GONE);
+//                progressbar.setVisibility(View.GONE);
             }
         });
     }

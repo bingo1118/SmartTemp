@@ -55,14 +55,18 @@ public class RequestCenter {
     /**
      * 用户通行记录
      */
-    public static void getPassRecords(String userId,String departmentId,String pageNo,String startTime,String endTime,DisposeDataListener listener) {
+    public static void getPassRecords(String userId,String departmentId
+            ,String pageNo,String startTime,String endTime,String personType,
+            String today,DisposeDataListener listener) {
 
         RequestParams params = new RequestParams();
         params.put("userId",userId);
         params.put("departmentId", departmentId);
+        params.put("personType", personType);//用户类型 1 员工 2 访客
         params.put("pageNo",pageNo);
         params.put("startTime", startTime);
         params.put("endTime",endTime);
+        params.put("today",today);//是否查询今日 1 今日
         RequestCenter.getRequest(HttpConstants.PASSRECORD, params, listener, PassRecordResponse.class);
     }
 
@@ -80,7 +84,7 @@ public class RequestCenter {
     /**
      * 查询报警历史列表
      */
-    public static void getAlarmList(String userId,String pageNo,String departmentId,String startTime,String endTime,DisposeDataListener listener) {
+    public static void getAlarmList(String userId,String pageNo,String departmentId,String startTime,String endTime,String today,DisposeDataListener listener) {
 
         RequestParams params = new RequestParams();
         params.put("userId",userId);
@@ -88,6 +92,7 @@ public class RequestCenter {
         params.put("departmentId",departmentId);
         params.put("startTime",startTime);
         params.put("endTime",endTime);
+        params.put("today",today);
         RequestCenter.getRequest(HttpConstants.ALARMLIST, params, listener, PassRecordResponse.class);
     }
 
