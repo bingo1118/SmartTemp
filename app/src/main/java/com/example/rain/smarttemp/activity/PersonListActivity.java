@@ -69,6 +69,11 @@ public class PersonListActivity extends Activity {
                     mPartmentId=info.getDepartmentId()+"";
                     passRecordList.clear();
                     getData();
+                }else{
+                    page=1;
+                    mPartmentId="";
+                    passRecordList.clear();
+                    getData();
                 }
             }
         });

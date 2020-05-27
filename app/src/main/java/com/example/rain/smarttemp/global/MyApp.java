@@ -3,7 +3,10 @@ package com.example.rain.smarttemp.global;
 import android.app.Application;
 import android.text.TextUtils;
 
+import com.example.rain.smarttemp.geTuiPush.DemoIntentService;
+import com.example.rain.smarttemp.geTuiPush.DemoPushService;
 import com.example.rain.smarttemp.utils.SharedPreferencesManager;
+import com.igexin.sdk.PushManager;
 
 public class MyApp extends Application {
 
@@ -14,6 +17,9 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         app=this;
+        //启动个推接收推送信息。。
+        PushManager.getInstance().initialize(this.getApplicationContext(), DemoPushService.class);
+        PushManager.getInstance().registerPushIntentService(this.getApplicationContext(), DemoIntentService.class);
     }
 
     public static void setUserID(String id){

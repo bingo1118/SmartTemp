@@ -56,7 +56,7 @@ public class PassRecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             ((MyViewHolder)holder).state_tv.setTextColor(Color.GRAY);
         }
         Glide.with(mContext)
-                .load(RequestCenter.WEB_URL+passRecord.getImg())
+                .load(RequestCenter.WEB_URL+"/passRecordImg/"+passRecord.getImg())
                 .apply(RequestOptions.placeholderOf(R.drawable.login_bg).error(R.drawable.login_bg).bitmapTransform(new CircleCrop()))
                 .into(((MyViewHolder)holder).photo_iv);
     }

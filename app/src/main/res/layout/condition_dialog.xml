@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:text="条件选择"/>
+
+    <com.example.rain.smarttemp.view.TimePickerViewHelper
+        android:id="@+id/starttime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        app:timerpicker_hint_Text="开始时间"
+        android:layout_margin="10dp"/>
+
+    <com.example.rain.smarttemp.view.TimePickerViewHelper
+        android:id="@+id/endtime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        app:timerpicker_hint_Text="结束时间"
+        android:layout_margin="10dp" />
+
+    <com.example.rain.smarttemp.view.PartmentChooseListView
+        android:id="@+id/partment_choose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:hint_Text="部门"
+        app:edit_TextColor="@color/text_view_and_kuang"/>
+
+
+</LinearLayout>

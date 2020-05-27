@@ -1,6 +1,8 @@
 package com.example.rain.smarttemp.model;
 
-public class PassRecord{
+import java.io.Serializable;
+
+public class PassRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

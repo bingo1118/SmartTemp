@@ -4,6 +4,17 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- 个推 SDK 权限配置开始 -->
+    <!-- 必选权限 -->
+    />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
     <application
         android:name=".global.MyApp"
         android:allowBackup="true"
@@ -11,7 +22,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +36,31 @@
         <activity android:name=".activity.PersonByConditionActivity" />
         <activity android:name=".activity.PersonListActivity" />
         <activity android:name=".activity.AlarmHistoryActivity" />
-        <activity android:name=".activity.PassRecordByPersonIdActivity"></activity>
+        <activity android:name=".activity.PassRecordByPersonIdActivity" />
+
+        <!-- 配置 SDK 核心服务 -->
+        <!-- permission 属性在 2.13.1.0 版本后必须配置 -->
+
+        <service
+            android:name=".geTuiPush.DemoPushService"
+            android:exported="true"
+            android:label="PushService"
+            android:process=":pushservice" />
+        <service android:name=".geTuiPush.DemoIntentService" />
+
+        <receiver android:name="com.igexin.sdk.PushReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <!-- 以下三项为可选的 action 声明，有助于提高 service 存活率 -->
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".activity.AlarmActivity"></activity>
     </application>
 
 </manifest>

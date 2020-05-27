@@ -8,4 +8,9 @@
         <attr name="hint_Text" format="string"/>
         <attr name="clear_choice_IsShow" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="TimePickerViewHelper">/>
+        <attr name="timerpicker_hint_Text" format="string"/>
+        <attr name="timerpicker_date" format="boolean"/>
+    </declare-styleable>
 </resources>

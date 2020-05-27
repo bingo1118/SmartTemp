@@ -51,7 +51,7 @@ public class PersonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         ((MyViewHolder)holder).area_tv.setText("区域:"+passRecord.getArea());
         ((MyViewHolder)holder).apatement_tv.setText("部门:"+passRecord.getDepartment());
         Glide.with(mContext)
-                .load(RequestCenter.WEB_URL+passRecord.getPersonReg())
+                .load(RequestCenter.WEB_URL+"/personRegImg/"+passRecord.getPersonReg())
                 .apply(RequestOptions.placeholderOf(R.drawable.login_bg).error(R.drawable.login_bg).bitmapTransform(new CircleCrop()))
                 .into(((MyViewHolder)holder).photo_iv);
         ((MyViewHolder)holder).relativeLayout.setOnClickListener(new View.OnClickListener() {

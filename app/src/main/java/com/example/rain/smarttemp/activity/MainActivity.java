@@ -2,6 +2,7 @@ package com.example.rain.smarttemp.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,9 +19,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,12 +32,16 @@ import com.example.rain.smarttemp.R;
 import com.example.rain.smarttemp.adapter.PassRecordAdapter;
 import com.example.rain.smarttemp.api.RequestCenter;
 import com.example.rain.smarttemp.global.MyApp;
+import com.example.rain.smarttemp.model.Department;
 import com.example.rain.smarttemp.model.HttpResponse;
 import com.example.rain.smarttemp.model.PassRecord;
 import com.example.rain.smarttemp.model.PassRecordResponse;
 import com.example.rain.smarttemp.model.PassSum;
 import com.example.rain.smarttemp.utils.SharedPreferencesManager;
 import com.example.rain.smarttemp.utils.T;
+import com.example.rain.smarttemp.view.PartmentChooseListView;
+import com.example.rain.smarttemp.view.TimePickerViewHelper;
+import com.igexin.sdk.PushManager;
 import com.imooc.lib_network.okhttp.listener.DisposeDataListener;
 
 import java.util.ArrayList;
@@ -51,7 +59,8 @@ public class MainActivity extends Activity {
     SwipeRefreshLayout swipereFreshLayout;
     @Bind(R.id.naviView)
     NavigationView navigationView;
-
+    @Bind({R.id.progressbar})
+    ProgressBar progressbar;
     @Bind(R.id.peopleCount_tv)
     TextView peopleCount_tv;
     @Bind(R.id.personCount_tv)
@@ -60,6 +69,9 @@ public class MainActivity extends Activity {
     TextView vistorCount_tv;
     @Bind(R.id.unNormalCount_tv)
     TextView unNormalCount_tv;
+
+    @Bind(R.id.search_btn)
+    ImageButton search_btn;
 
     @Bind(R.id.drawerLayout)
     DrawerLayout drawerLayout;
@@ -76,6 +88,10 @@ public class MainActivity extends Activity {
     private int firstVisibleItem;
     private int page=1;
 
+    private String partmentId="";
+    private String startTime="";
+    private String endTime="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,13 +103,17 @@ public class MainActivity extends Activity {
         getPassRecordData();
         getPassSum();
         initView();
+        PushManager.getInstance().bindAlias(this.getApplicationContext(),MyApp.getUserID());
     }
 
-    @OnClick({R.id.personCount_tv,R.id.vistorCount_tv,R.id.unNormalCount_tv,R.id.drawer_show_btn})
+    @OnClick({R.id.personCount_tv,R.id.vistorCount_tv,R.id.unNormalCount_tv,R.id.drawer_show_btn,R.id.search_btn})
     public void onClick(View v){
         int type=0;
         Intent i=new Intent(MainActivity.this,PersonByConditionActivity.class);
         switch (v.getId()){
+            case R.id.search_btn:
+                showConditionDialog();
+                break;
             case R.id.drawer_show_btn:
                 if(!drawerLayout.isDrawerOpen(navigationView)){
                     drawerLayout.openDrawer(Gravity.START);
@@ -165,12 +185,52 @@ public class MainActivity extends Activity {
                         builder.show();
                         break;
                 }
+                drawerLayout.closeDrawer(Gravity.START);
                 return true;
             }
         });
     }
 
+    private void showConditionDialog() {
+        Dialog dialog = null;
+        final AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
+        View view= LayoutInflater.from(mContext).inflate(R.layout.condition_dialog,null,false);
+        builder.setView(view);
+        TimePickerViewHelper startTimePicker=view.findViewById(R.id.starttime);
+        TimePickerViewHelper endTimePicker=view.findViewById(R.id.endtime);
+        PartmentChooseListView partmentPicker=view.findViewById(R.id.partment_choose);
+        startTimePicker.setmOnTimeGetListener(new TimePickerViewHelper.OnTimeGetListener() {
+            @Override
+            public void getDate(String dateString) {
+                startTime=dateString;
+            }
+        });
+        endTimePicker.setmOnTimeGetListener(new TimePickerViewHelper.OnTimeGetListener() {
+            @Override
+            public void getDate(String dateString) {
+                endTime=dateString;
+            }
+        });
+        partmentPicker.setOnChildChooceClickListener(new PartmentChooseListView.OnChildChooceClickListener() {
+            @Override
+            public void OnChildClick(Department info) {
+                partmentId=info.getDepartmentId()+"";
+            }
+        });
+
+        builder.setPositiveButton("提交", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                passRecordList.clear();
+                getPassRecordData();
+            }
+        });
+        builder.show();
+
+    }
+
     private void exitAcount() {
+        PushManager.getInstance().unBindAlias(mContext,MyApp.getUserID(),true);
         SharedPreferencesManager.getInstance().removeData(mContext,
                 SharedPreferencesManager.SP_FILE_GWELL);
         Intent in = new Intent(mContext, LoginActivity.class);
@@ -193,6 +253,9 @@ public class MainActivity extends Activity {
             @Override
             public void onRefresh() {
                 page=1;
+                startTime="";
+                endTime="";
+                partmentId="";
                 passRecordList.clear();
                 getPassRecordData();
             }
@@ -224,7 +287,10 @@ public class MainActivity extends Activity {
     }
 
     private void getPassRecordData() {
-        RequestCenter.getPassRecords(MyApp.getUserID(), "",page+"","","", new DisposeDataListener() {
+        if(page!=1){
+            progressbar.setVisibility(View.VISIBLE);
+        }
+        RequestCenter.getPassRecords(MyApp.getUserID(), partmentId,page+"",startTime,endTime, new DisposeDataListener() {
             @Override
             public void onSuccess(Object responseObj) {
                 if(passRecordList==null){
@@ -247,12 +313,14 @@ public class MainActivity extends Activity {
                     recyclerView.setAdapter(mAdapter);
                     swipereFreshLayout.setRefreshing(false);
                 }
+                progressbar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Object reasonObj) {
                 T.showShort(mContext,"获取失败");
                 swipereFreshLayout.setRefreshing(false);
+                progressbar.setVisibility(View.GONE);
             }
         });
     }

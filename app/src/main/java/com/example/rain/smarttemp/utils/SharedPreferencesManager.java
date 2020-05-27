@@ -8,11 +8,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
+import com.example.rain.smarttemp.global.NpcCommon;
+
 
 public class SharedPreferencesManager {
     public static final String SP_FILE_GWELL = "gwell";
     public static String KEY_USERID="KEY_USERID";
     public static String KEY_PWD="KEY_PWD";
+
+    public static final String KEY_C_BELL_TYPE = "c_bell_type";
+    public static final String KEY_C_SD_BELL = "c_sd_bell";
+    public static final String KEY_C_SYS_BELL = "c_system_bell";
+    public static final int TYPE_BELL_SYS = 0;
+    public static final int TYPE_BELL_SD = 1;
 
     private String FILE_NAME="smart_temp";
     private static SharedPreferencesManager manager = null;
@@ -140,6 +148,24 @@ public class SharedPreferencesManager {
     public boolean getIsShowNotify(Context context){
         SharedPreferences sf = context.getSharedPreferences(FILE_NAME, context.MODE_PRIVATE);
         return sf.getBoolean(IS_SHOW_NOTIFY,true);
+    }
+
+    public int getCBellType(Context context) {
+        SharedPreferences sf = context.getSharedPreferences(SP_FILE_GWELL,
+                context.MODE_PRIVATE);
+        return sf.getInt(NpcCommon.mThreeNum + KEY_C_BELL_TYPE, TYPE_BELL_SYS);
+    }
+
+    public int getCSdBellId(Context context) {
+        SharedPreferences sf = context.getSharedPreferences(SP_FILE_GWELL,
+                context.MODE_PRIVATE);
+        return sf.getInt(NpcCommon.mThreeNum + KEY_C_SD_BELL, -1);
+    }
+
+    public int getCSystemBellId(Context context) {
+        SharedPreferences sf = context.getSharedPreferences(SP_FILE_GWELL,
+                context.MODE_PRIVATE);
+        return sf.getInt(NpcCommon.mThreeNum + KEY_C_SYS_BELL, -1);
     }
 }
 

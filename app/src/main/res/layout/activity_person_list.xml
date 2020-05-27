@@ -13,12 +13,12 @@
         android:background="@color/colorPrimaryDark">
         <com.example.rain.smarttemp.view.PartmentChooseListView
             android:id="@+id/partment_choose"
-            android:layout_width="150dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_centerInParent="true"
             android:padding="5dp"
-            android:background="@color/white"
+            android:background="@drawable/chooselist_shape"
             app:hint_Text="部门"/>
     </RelativeLayout>
 
